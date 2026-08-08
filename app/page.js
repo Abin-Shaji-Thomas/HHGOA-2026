@@ -304,12 +304,18 @@ function collectSocials(info) {
 }
 
 /* ==========================================
-   BOARDING PASS CANVAS ENGINE (1080×566)
+   BOARDING PASS CANVAS ENGINE (2160×1132 2x HD)
    ========================================== */
 async function drawBoardingPass(ctx, photo, assets, info) {
-  const W = 1080, H = 566
-  ctx.canvas.width = W
-  ctx.canvas.height = H
+  const SCALE = 2
+  const LOGICAL_W = 1080, LOGICAL_H = 566
+  ctx.canvas.width = LOGICAL_W * SCALE
+  ctx.canvas.height = LOGICAL_H * SCALE
+
+  ctx.save()
+  ctx.scale(SCALE, SCALE)
+
+  const W = LOGICAL_W, H = LOGICAL_H
 
   // Cream ticket base
   ctx.fillStyle = '#F5EDD6'
@@ -415,7 +421,7 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.fillStyle = '#0B6839'
   ctx.fillRect(RX, 122, contentW, 2)
 
-  // Dynamic Fields Collection (Passenger, Gate, Role, Location, Stack, and ALL Socials!)
+  // Dynamic Fields Collection (EVERY SINGLE FIELD user fills is displayed!)
   const fields = []
   fields.push({ label: 'PASSENGER', val: info.name || 'YOUR NAME' })
   fields.push({ label: 'GATE / SEAT', val: `GOA-247 · ${info.builderId?.slice(-4) || 'B247'}` })
@@ -433,36 +439,36 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     fields.push({ label: s.label, val: s.val })
   })
 
-  // Render fields in 2 columns using drawAutoFitText
-  const fieldYStart = 152
-  const rowHeight = 48
-  const colW = (contentW - 30) / 2
+  // Render ALL fields in 2 columns using drawAutoFitText (No cutting off!)
+  const fieldYStart = 144
+  const rowHeight = 38
+  const colW = (contentW - 24) / 2
 
-  fields.slice(0, 8).forEach((field, i) => {
+  fields.forEach((field, i) => {
     const colIdx = i % 2
     const rowIdx = Math.floor(i / 2)
-    const fx = RX + colIdx * (colW + 30)
+    const fx = RX + colIdx * (colW + 24)
     const fy = fieldYStart + rowIdx * rowHeight
 
-    ctx.fillStyle = 'rgba(11,104,57,0.7)'
-    ctx.font = '700 10px "JetBrains Mono", monospace'
+    ctx.fillStyle = 'rgba(11,104,57,0.75)'
+    ctx.font = '700 9.5px "JetBrains Mono", monospace'
     ctx.textAlign = 'left'
     ctx.fillText(field.label, fx, fy)
 
     ctx.fillStyle = '#052C17'
-    drawAutoFitText(ctx, field.val, fx, fy + 20, colW, 15, 'Space Grotesk', 'bold', 'left')
+    drawAutoFitText(ctx, field.val, fx, fy + 17, colW, 14, 'Space Grotesk', 'bold', 'left')
   })
 
   // Barcode section
-  const bcY = H - 120
+  const bcY = H - 110
   ctx.fillStyle = 'rgba(11,104,57,0.08)'
-  roundRect(ctx, RX, bcY, contentW, 54, 8)
+  roundRect(ctx, RX, bcY, contentW, 50, 8)
   ctx.fill()
-  drawBarcode(ctx, RX + 12, bcY + 8, contentW - 24, 26)
+  drawBarcode(ctx, RX + 12, bcY + 6, contentW - 24, 24)
   ctx.fillStyle = '#0B6839'
-  ctx.font = '700 11px "JetBrains Mono", monospace'
+  ctx.font = '700 10.5px "JetBrains Mono", monospace'
   ctx.textAlign = 'center'
-  ctx.fillText(`PASS ID: ${info.builderId || 'HH26-XXXXXX'}  ·  BOARDING: OCT 28, 2026`, RX + contentW / 2, bcY + 46)
+  ctx.fillText(`PASS ID: ${info.builderId || 'HH26-XXXXXX'}  ·  BOARDING: OCT 28, 2026`, RX + contentW / 2, bcY + 42)
 
   // Hashtag footer strip
   ctx.fillStyle = '#0B6839'
@@ -471,25 +477,33 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.font = 'bold 18px "Space Grotesk", sans-serif'
   ctx.textAlign = 'center'
   ctx.fillText('#FrameInGoa  ·  hhgoa.com  ·  2:47PM STUDIO', STUB + (W - STUB) / 2, H - 18)
+
+  ctx.restore()
 }
 
 /* ==========================================
-   VIP BUILDER ID CARD ENGINE (1080×1350)
+   VIP BUILDER ID CARD ENGINE (2160×2700 2x HD)
    Full Vertical Layout & Theme Adaptations
    ========================================== */
 async function drawIdCard(ctx, photo, assets, info) {
-  const W = 1080, H = 1350
-  ctx.canvas.width = W
-  ctx.canvas.height = H
+  const SCALE = 2
+  const LOGICAL_W = 1080, LOGICAL_H = 1350
+  ctx.canvas.width = LOGICAL_W * SCALE
+  ctx.canvas.height = LOGICAL_H * SCALE
+
+  ctx.save()
+  ctx.scale(SCALE, SCALE)
+
+  const W = LOGICAL_W, H = LOGICAL_H
 
   const theme = info.idTheme || 'emerald'
   const isSunset = theme === 'sunset'
   const isOcean = theme === 'ocean'
 
-  const bgDark = isSunset ? '#2A0B22' : (isOcean ? '#041B2D' : '#052C17')
-  const cardBg = isSunset ? 'rgba(74, 14, 58, 0.94)' : (isOcean ? 'rgba(8, 45, 74, 0.94)' : 'rgba(9,78,42,0.92)')
-  const goldAccent = isSunset ? '#F5D800' : (isOcean ? '#00E5FF' : '#F5D800')
-  const pinkAccent = isSunset ? '#FF2D84' : (isOcean ? '#00E5FF' : '#FF2D84')
+  const bgDark = isSunset ? '#260721' : (isOcean ? '#031726' : '#052C17')
+  const cardBg = isSunset ? 'rgba(68, 14, 56, 0.94)' : (isOcean ? 'rgba(8, 45, 74, 0.94)' : 'rgba(9,78,42,0.92)')
+  const goldAccent = isSunset ? '#FF2D84' : (isOcean ? '#00E5FF' : '#F5D800')
+  const pinkAccent = isSunset ? '#F5D800' : (isOcean ? '#FF2D84' : '#FF2D84')
 
   // Base Background
   ctx.fillStyle = bgDark
@@ -536,7 +550,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.stroke()
   ctx.restore()
 
-  // Inner VIP Card Container (Fills the card gracefully!)
+  // Inner VIP Card Container
   const pad = 40
   const cardW = W - pad * 2
   const cardH = H - pad * 2 - 10
@@ -552,7 +566,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.stroke()
   ctx.restore()
 
-  // Yellow Header Strip with Logo
+  // Header Strip with Logo
   ctx.fillStyle = goldAccent
   roundRect(ctx, cardX + 24, cardY + 24, cardW - 48, 116, 20)
   ctx.fill()
@@ -632,7 +646,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.fillText('VIP 2026', sealX, sealY + 10)
   ctx.restore()
 
-  // Builder Name (Using Auto-Fit Font Scaling)
+  // Builder Name
   const nameY = photoY + photoSize + 55
   const rawName = (info.name || 'YOUR NAME').toUpperCase()
   ctx.fillStyle = '#FAFAF8'
@@ -649,7 +663,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   drawAutoFitText(ctx, bClass, W / 2, nameY + 46, bClassW - 20, 17, 'Space Grotesk', '800', 'center')
 
-  // Multi-Social & Info Grid Container (Spans full height!)
+  // Multi-Social & Info Grid Container
   const gridY = nameY + 86
   const gridW = cardW - 64
   const gridX = cardX + 32
@@ -689,7 +703,6 @@ async function drawIdCard(ctx, photo, assets, info) {
     const fx = gridX + 22 + colIdx * (colWidth + 20)
     const fy = gridY + 24 + rowIdx * 72
 
-    // Card tile background
     ctx.fillStyle = 'rgba(255,255,255,0.05)'
     roundRect(ctx, fx - 10, fy - 16, colWidth, 62, 12)
     ctx.fill()
@@ -703,7 +716,7 @@ async function drawIdCard(ctx, photo, assets, info) {
     drawAutoFitText(ctx, item.val, fx, fy + 24, colWidth - 20, 15, 'Space Grotesk', '600', 'left')
   })
 
-  // Footer Barcode (Anchored cleanly at bottom of card!)
+  // Footer Barcode
   const footerY = cardY + cardH - 120
   ctx.fillStyle = 'rgba(0,0,0,0.35)'
   roundRect(ctx, gridX, footerY, gridW, 80, 16)
@@ -715,15 +728,23 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.font = '700 13px "JetBrains Mono", monospace'
   ctx.textAlign = 'center'
   ctx.fillText(`PASS ID: ${info.builderId || 'HH26-VIP247'}  ·  #FrameInGoa  ·  2:47PM STUDIO`, W / 2, footerY + 64)
+
+  ctx.restore()
 }
 
 /* ==========================================
-   PROFILE / PFP FRAME ENGINE (1080×1080)
+   PROFILE / PFP FRAME ENGINE (2160×2160 2x HD)
    ========================================== */
 async function drawPfp(ctx, photo, assets, info) {
-  const W = 1080, H = 1080
-  ctx.canvas.width = W
-  ctx.canvas.height = H
+  const SCALE = 2
+  const LOGICAL_W = 1080, LOGICAL_H = 1080
+  ctx.canvas.width = LOGICAL_W * SCALE
+  ctx.canvas.height = LOGICAL_H * SCALE
+
+  ctx.save()
+  ctx.scale(SCALE, SCALE)
+
+  const W = LOGICAL_W, H = LOGICAL_H
 
   // Background — Deep Emerald Base
   ctx.fillStyle = '#084D2A'
@@ -794,7 +815,7 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText('GOA, INDIA · OCT 28–31 · 2:47PM STUDIO', W / 2, 80)
 
-  // Central Photo Circle (Positioned with 100px+ breathing room for name badge below)
+  // Central Photo Circle
   const photoR = 250
   const photoCX = W / 2
   const photoCY = H / 2 - 40
@@ -843,7 +864,7 @@ async function drawPfp(ctx, photo, assets, info) {
   }
   ctx.restore()
 
-  // Name Label positioned further down with clean rounded rectangle pill (Fixed r=16!)
+  // Name Label
   if (info.name) {
     const rawName = info.name.toUpperCase()
     ctx.font = 'bold 42px "Space Grotesk", sans-serif'
@@ -873,17 +894,25 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.fillStyle = 'rgba(250,250,248,0.6)'
   ctx.font = '13px "JetBrains Mono", monospace'
   ctx.fillText('hhgoa.com · Oct 28-31, 2026 · Goa, India', W / 2, H - 22)
+
+  ctx.restore()
 }
 
 /* ==========================================
-   DYNAMIC TEAM FRAME ENGINE (1200×630)
+   DYNAMIC TEAM FRAME ENGINE (2400×1260 2x HD)
    ========================================== */
 async function drawTeamFrame(ctx, photos, assets, info) {
-  const W = 1200, H = 630
-  ctx.canvas.width = W
-  ctx.canvas.height = H
+  const SCALE = 2
+  const LOGICAL_W = 1200, LOGICAL_H = 630
+  ctx.canvas.width = LOGICAL_W * SCALE
+  ctx.canvas.height = LOGICAL_H * SCALE
 
-  // Background scene (hackers / buildersScene / sunrise)
+  ctx.save()
+  ctx.scale(SCALE, SCALE)
+
+  const W = LOGICAL_W, H = LOGICAL_H
+
+  // Background scene
   const bgImg = assets.hackers || assets.buildersScene || assets.sunrise
   if (bgImg) {
     ctx.save()
@@ -922,7 +951,7 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.restore()
   }
 
-  // Top Header Banner with Event Name & Details
+  // Top Header Banner
   ctx.fillStyle = '#F5D800'
   ctx.fillRect(0, 0, W, 76)
   ctx.fillStyle = '#0B6839'
@@ -980,7 +1009,7 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.fillText(subHandle, cx, cy + slotR + 50)
   }
 
-  // Footer Banner with Hashtag
+  // Footer Banner
   ctx.fillStyle = 'rgba(0,0,0,0.85)'
   ctx.fillRect(0, H - 64, W, 64)
   ctx.fillStyle = '#F5D800'
@@ -990,6 +1019,8 @@ async function drawTeamFrame(ctx, photos, assets, info) {
   ctx.fillStyle = 'rgba(250,250,248,0.6)'
   ctx.font = '12px "JetBrains Mono", monospace'
   ctx.fillText('2:47 PM STUDIO  ·  247 BUILDERS SELECTED', W / 2, H - 14)
+
+  ctx.restore()
 }
 
 /* ==========================================
@@ -1093,7 +1124,7 @@ export default function Page() {
     return () => cancelAnimationFrame(animationFrameId)
   }, [activeFrame, userPhoto, teamPhotos, info, assetsLoaded, assets, step])
 
-  // Directional Nudge handlers for precision photo position adjustments
+  // Directional Nudge handlers
   const nudgePhoto = (dir) => {
     setInfo(prev => {
       let { photoPanX, photoPanY } = prev
@@ -1142,7 +1173,7 @@ export default function Page() {
       a.download = `hhgoa-2026-${activeFrame}.png`
       a.click()
       URL.revokeObjectURL(url)
-      showToast('Frame downloaded as PNG!')
+      showToast('Ultra HD Frame downloaded as PNG!')
     }, 'image/png')
   }
 
@@ -1154,7 +1185,7 @@ export default function Page() {
       canvasRef.current.toBlob(async (blob) => {
         try {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
-          showToast('Image copied to clipboard!')
+          showToast('Ultra HD Image copied to clipboard!')
         } catch { }
       })
     }
@@ -1261,14 +1292,15 @@ export default function Page() {
                   </p>
                   <div className="landing-features">
                     {[
-                      ['Boarding Pass', '1080×566'],
-                      ['VIP Builder ID', '1080×1350'],
-                      ['Profile Frame', '1080×1080'],
-                      ['Team Frame', '1200×630'],
-                    ].map(([name, dim]) => (
+                      ['Boarding Pass', '1080×566', 'Vintage flight ticket pass with seat stub & barcode'],
+                      ['VIP Builder ID', '1080×1350', 'Festival VIP badge with lanyard & hologram seal'],
+                      ['Profile Frame', '1080×1080', 'Circular PFP avatar with Goan arch ornament'],
+                      ['Team Frame', '1200×630', 'Squad card for 1 to 4 team builders'],
+                    ].map(([name, dim, desc]) => (
                       <div className="feature-chip" key={name}>
                         <span className="chip-name">{name}</span>
                         <span className="chip-dim">{dim}</span>
+                        <span className="chip-desc">{desc}</span>
                       </div>
                     ))}
                   </div>
@@ -1592,9 +1624,9 @@ export default function Page() {
                             <label className="field-label">VIP ID CARD THEME</label>
                             <div className="theme-selector-row">
                               {[
-                                ['emerald', '🌴 Emerald & Gold'],
-                                ['sunset', '🌅 Sunset Twilight'],
-                                ['ocean', '🌊 Arabian Blue'],
+                                ['emerald', 'Emerald & Gold'],
+                                ['sunset', 'Sunset Twilight'],
+                                ['ocean', 'Arabian Ocean'],
                               ].map(([tKey, tLabel]) => (
                                 <button
                                   key={tKey}
@@ -1646,7 +1678,7 @@ export default function Page() {
 
                   {/* RIGHT CANVAS PREVIEW & EXPORT ACTIONS */}
                   <div className="preview-panel">
-                    <div className="preview-label">LIVE HIGH-RES PREVIEW</div>
+                    <div className="preview-label">LIVE ULTRA-HD PREVIEW</div>
                     <div className="canvas-wrap">
                       <canvas ref={canvasRef} />
                     </div>
@@ -1657,7 +1689,7 @@ export default function Page() {
                       </button>
                       <div className="result-action-secondary">
                         <button className="btn-download" onClick={handleDownload} id="btn-download">
-                          <Icons.Download /> Download PNG
+                          <Icons.Download /> Download Ultra HD PNG
                         </button>
                         <button className="btn-edit" onClick={handleWebShare} id="btn-web-share">
                           <Icons.Share /> Share File
