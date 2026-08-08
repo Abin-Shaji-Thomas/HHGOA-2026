@@ -757,10 +757,10 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText('GOA, INDIA · OCT 28–31 · 2:47PM STUDIO', W / 2, 80)
 
-  // Central Photo Circle (Reduced radius & shifted up for clean non-overlapping name placement)
-  const photoR = 270
+  // Central Photo Circle (Positioned with 100px+ breathing room for name badge below)
+  const photoR = 250
   const photoCX = W / 2
-  const photoCY = H / 2 - 20
+  const photoCY = H / 2 - 40
 
   // Outer Glow
   const glowGrad = ctx.createRadialGradient(photoCX, photoCY, photoR - 20, photoCX, photoCY, photoR + 60)
@@ -791,10 +791,10 @@ async function drawPfp(ctx, photo, assets, info) {
 
   // Circular text wrapper around avatar
   ctx.save()
-  ctx.font = '700 20px "JetBrains Mono", monospace'
+  ctx.font = '700 19px "JetBrains Mono", monospace'
   ctx.fillStyle = 'rgba(245,216,0,0.85)'
   const arcText = 'HACKER HOUSE GOA 2026 · BUILD IN GOA · SHIP FROM PARADISE · '
-  const arcR = photoR + 38
+  const arcR = photoR + 36
   ctx.translate(photoCX, photoCY)
   const charAngle = (2 * Math.PI) / arcText.length
   for (let i = 0; i < arcText.length; i++) {
@@ -806,16 +806,16 @@ async function drawPfp(ctx, photo, assets, info) {
   }
   ctx.restore()
 
-  // Name Label with dark backdrop pill for maximum legibility & zero overlap
+  // Name Label positioned further down with dark backdrop pill
   if (info.name) {
     const rawName = info.name.toUpperCase()
-    ctx.font = 'bold 44px "Space Grotesk", sans-serif'
+    ctx.font = 'bold 42px "Space Grotesk", sans-serif'
     const nameW = ctx.measureText(rawName).width
-    const nameY = photoCY + photoR + 68
+    const nameY = photoCY + photoR + 105
 
     ctx.save()
-    roundRect(ctx, W / 2 - (nameW + 48) / 2, nameY - 40, nameW + 48, 56, 100)
-    ctx.fillStyle = 'rgba(5, 44, 23, 0.92)'
+    roundRect(ctx, W / 2 - (nameW + 48) / 2, nameY - 38, nameW + 48, 54, 100)
+    ctx.fillStyle = 'rgba(5, 44, 23, 0.95)'
     ctx.fill()
     ctx.strokeStyle = '#F5D800'
     ctx.lineWidth = 2
@@ -1402,7 +1402,7 @@ export default function Page() {
                                   style={{ display: 'none' }}
                                   onChange={(e) => handleFile(e.target.files?.[0], idx)}
                                 />
-                                {teamPhotos[idx] ? '✓ Member' : `+ Add Member ${idx + 1}`}
+                                {teamPhotos[idx] ? '✓ Member' : `+ Member ${idx + 1}`}
                               </div>
                               <input
                                 type="text"
