@@ -2,9 +2,6 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 
-/* ==========================================
-   SVG ICONS
-   ========================================== */
 const Icons = {
   Ticket: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -46,9 +43,6 @@ const Icons = {
   ),
 }
 
-/* ==========================================
-   BUILDER CLASS GENERATOR (30+ Creative Titles)
-   ========================================== */
 const BUILDER_CLASSES = [
   'Coastal Architect',
   'Async Alchemist',
@@ -94,9 +88,6 @@ function generateBuilderId() {
   return id
 }
 
-/* ==========================================
-   SHARE TEXT & PRE-FILLED TWEET
-   ========================================== */
 const makeShareText = (name, builderClass) => `Just got my #FrameInGoa pass for Hacker House Goa 2026 🌴
 
 ${name ? `${name} — ${builderClass}` : 'Builder heading to paradise'}
@@ -108,9 +99,6 @@ Generate yours & join the radar → https://hhgoa-2026-five.vercel.app/
 
 #HackerHouseGoa #FrameInGoa #BuildInPublic`
 
-/* ==========================================
-   FRAME CONFIGURATIONS
-   ========================================== */
 const FRAMES = [
   { id: 'boarding', name: 'Boarding Pass', dim: '1080×566', w: 1080, h: 566 },
   { id: 'id-card', name: 'VIP Builder ID', dim: '1080×1350', w: 1080, h: 1350 },
@@ -118,9 +106,6 @@ const FRAMES = [
   { id: 'team', name: 'Team Frame', dim: '1200×630', w: 1200, h: 630 },
 ]
 
-/* ==========================================
-   SCORE CALCULATOR
-   ========================================== */
 function calcScore(inputs) {
   const likes = parseInt(inputs.likes) || 0
   const replies = parseInt(inputs.replies) || 0
@@ -141,9 +126,6 @@ function verdict(score) {
   return { text: 'Post it and watch your score climb.', color: '#888' }
 }
 
-/* ==========================================
-   CANVAS HELPERS & AUTO-FIT PHOTO ENGINE
-   ========================================== */
 function loadImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -168,9 +150,6 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath()
 }
 
-/**
-  Dynamic Font Scaling Helper: Scales font size down automatically to fit max width gracefully without clipping
- */
 function drawAutoFitText(ctx, text, x, y, maxW, baseFontSize, fontFace = 'Space Grotesk', weight = 'bold', align = 'center') {
   let size = baseFontSize
   ctx.font = `${weight} ${size}px "${fontFace}", sans-serif`
@@ -303,9 +282,6 @@ function collectSocials(info) {
   return items
 }
 
-/* ==========================================
-   BOARDING PASS CANVAS ENGINE (2160×1132 2x HD)
-   ========================================== */
 async function drawBoardingPass(ctx, photo, assets, info) {
   const SCALE = 2
   const LOGICAL_W = 1080, LOGICAL_H = 566
@@ -317,19 +293,15 @@ async function drawBoardingPass(ctx, photo, assets, info) {
 
   const W = LOGICAL_W, H = LOGICAL_H
 
-  // Cream ticket base
   ctx.fillStyle = '#F5EDD6'
   ctx.fillRect(0, 0, W, H)
 
-  // Dot matrix grid
   drawDotGrid(ctx, 0, 0, W, H, 'rgba(11,104,57,0.05)', 20)
 
-  // Left Stub Section (Emerald Green)
   const STUB = 340
   ctx.fillStyle = '#0B6839'
   ctx.fillRect(0, 0, STUB, H)
 
-  // Brand Ornament texture on stub
   if (assets.ornament) {
     ctx.save()
     ctx.globalAlpha = 0.25
@@ -337,7 +309,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     ctx.restore()
   }
 
-  // Stamp badge on stub
   ctx.save()
   ctx.translate(STUB - 60, 48)
   ctx.rotate(-0.15)
@@ -351,12 +322,10 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.fillText('GOA 2026 · VIP', 0, 4)
   ctx.restore()
 
-  // Photo Circle in Stub
   const photoR = 95
   const photoCX = STUB / 2
   const photoCY = H / 2 - 20
 
-  // Gold ring border
   ctx.save()
   ctx.beginPath()
   ctx.arc(photoCX, photoCY, photoR + 6, 0, Math.PI * 2)
@@ -367,16 +336,13 @@ async function drawBoardingPass(ctx, photo, assets, info) {
 
   drawPhotoCircle(ctx, photo, photoCX, photoCY, photoR, info.photoZoom, info.photoPanX, info.photoPanY)
 
-  // Passenger Name on Stub using drawAutoFitText
   const displayName = (info.name || 'YOUR NAME').toUpperCase()
   ctx.fillStyle = '#FAFAF8'
   drawAutoFitText(ctx, displayName, STUB / 2, photoCY + photoR + 32, STUB - 36, 22, 'Space Grotesk', 'bold', 'center')
 
-  // Builder Class Tag using drawAutoFitText
   ctx.fillStyle = '#FF2D84'
   drawAutoFitText(ctx, (info.builderClass || 'Coastal Architect').toUpperCase(), STUB / 2, photoCY + photoR + 54, STUB - 36, 14, 'Space Grotesk', '800', 'center')
 
-  // Stub bottom tag
   ctx.fillStyle = '#F5D800'
   ctx.fillRect(0, H - 54, STUB, 54)
   ctx.fillStyle = '#0B6839'
@@ -384,7 +350,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText('BOARDING PASS · 2026', STUB / 2, H - 20)
 
-  // Perforation tear line
   ctx.strokeStyle = '#0B6839'
   ctx.lineWidth = 2
   ctx.setLineDash([10, 8])
@@ -397,11 +362,9 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   drawPerforations(ctx, STUB + 10, 15, W - STUB - 20, false, 10)
   drawPerforations(ctx, STUB + 10, H - 15, W - STUB - 20, false, 10)
 
-  // Right Side Flight Pass
   const RX = STUB + 44
   const contentW = W - STUB - 64
 
-  // Top Header
   ctx.fillStyle = '#0B6839'
   ctx.font = 'bold 44px "Space Grotesk", sans-serif'
   ctx.textAlign = 'left'
@@ -417,11 +380,9 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.font = '700 12px "JetBrains Mono", monospace'
   ctx.fillText('FLIGHT HH2026  ✦  DESTINATION: GOA (GOI)  ✦  OCT 28–31', RX, 108)
 
-  // Divider
   ctx.fillStyle = '#0B6839'
   ctx.fillRect(RX, 122, contentW, 2)
 
-  // Dynamic Fields Collection (EVERY SINGLE FIELD user fills is displayed!)
   const fields = []
   fields.push({ label: 'PASSENGER', val: info.name || 'YOUR NAME' })
   fields.push({ label: 'GATE / SEAT', val: `GOA-247 · ${info.builderId?.slice(-4) || 'B247'}` })
@@ -439,7 +400,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     fields.push({ label: s.label, val: s.val })
   })
 
-  // Render ALL fields in 2 columns using drawAutoFitText (No cutting off!)
   const fieldYStart = 144
   const rowHeight = 38
   const colW = (contentW - 24) / 2
@@ -459,7 +419,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     drawAutoFitText(ctx, field.val, fx, fy + 17, colW, 14, 'Space Grotesk', 'bold', 'left')
   })
 
-  // Barcode section
   const bcY = H - 110
   ctx.fillStyle = 'rgba(11,104,57,0.08)'
   roundRect(ctx, RX, bcY, contentW, 50, 8)
@@ -470,7 +429,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText(`PASS ID: ${info.builderId || 'HH26-XXXXXX'}  ·  BOARDING: OCT 28, 2026`, RX + contentW / 2, bcY + 42)
 
-  // Hashtag footer strip
   ctx.fillStyle = '#0B6839'
   ctx.fillRect(STUB, H - 46, W - STUB, 46)
   ctx.fillStyle = '#F5D800'
@@ -481,10 +439,6 @@ async function drawBoardingPass(ctx, photo, assets, info) {
   ctx.restore()
 }
 
-/* ==========================================
-   VIP BUILDER ID CARD ENGINE (2160×2700 2x HD)
-   Full Vertical Layout & Theme Adaptations
-   ========================================== */
 async function drawIdCard(ctx, photo, assets, info) {
   const SCALE = 2
   const LOGICAL_W = 1080, LOGICAL_H = 1350
@@ -500,20 +454,35 @@ async function drawIdCard(ctx, photo, assets, info) {
   const isSunset = theme === 'sunset'
   const isOcean = theme === 'ocean'
 
-  const bgDark = isSunset ? '#260721' : (isOcean ? '#031726' : '#052C17')
-  const cardBg = isSunset ? 'rgba(68, 14, 56, 0.94)' : (isOcean ? 'rgba(8, 45, 74, 0.94)' : 'rgba(9,78,42,0.92)')
+  const bgOuter = isSunset ? '#1F061C' : (isOcean ? '#020F1A' : '#042815')
+  const cardBg = isSunset ? 'rgba(58, 11, 48, 0.96)' : (isOcean ? 'rgba(6, 36, 60, 0.96)' : 'rgba(7, 62, 34, 0.94)')
   const goldAccent = isSunset ? '#FF2D84' : (isOcean ? '#00E5FF' : '#F5D800')
   const pinkAccent = isSunset ? '#F5D800' : (isOcean ? '#FF2D84' : '#FF2D84')
 
-  // Base Background
-  ctx.fillStyle = bgDark
+  // Theme-Adapted Outer Canvas Fill
+  ctx.fillStyle = bgOuter
+  ctx.fillRect(0, 0, W, H)
+
+  // Radial dark vignette matching theme
+  const vignetteGrad = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 700)
+  if (isSunset) {
+    vignetteGrad.addColorStop(0, 'rgba(58, 11, 48, 0.5)')
+    vignetteGrad.addColorStop(1, 'rgba(26, 5, 23, 0.98)')
+  } else if (isOcean) {
+    vignetteGrad.addColorStop(0, 'rgba(6, 36, 60, 0.5)')
+    vignetteGrad.addColorStop(1, 'rgba(2, 14, 24, 0.98)')
+  } else {
+    vignetteGrad.addColorStop(0, 'rgba(7, 62, 34, 0.5)')
+    vignetteGrad.addColorStop(1, 'rgba(4, 40, 21, 0.98)')
+  }
+  ctx.fillStyle = vignetteGrad
   ctx.fillRect(0, 0, W, H)
 
   // Composite Brand Sunrise / Backdrop
   if (assets.sunrise || assets.agenda) {
     const bgImg = assets.sunrise || assets.agenda
     ctx.save()
-    ctx.globalAlpha = 0.35
+    ctx.globalAlpha = 0.3
     const bW = W
     const bH = (bgImg.height / bgImg.width) * bW
     ctx.drawImage(bgImg, 0, 0, bW, bH)
@@ -523,7 +492,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   // Ornament border overlay
   if (assets.ornament) {
     ctx.save()
-    ctx.globalAlpha = 0.22
+    ctx.globalAlpha = 0.2
     ctx.drawImage(assets.ornament, 0, 0, W, H)
     ctx.restore()
   }
@@ -531,7 +500,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   // Palm tree vector at bottom
   if (assets.palmTrees) {
     ctx.save()
-    ctx.globalAlpha = 0.4
+    ctx.globalAlpha = 0.45
     const ptW = W
     const ptH = (assets.palmTrees.height / assets.palmTrees.width) * ptW
     ctx.drawImage(assets.palmTrees, 0, H - ptH + 30, ptW, ptH)
@@ -541,9 +510,9 @@ async function drawIdCard(ctx, photo, assets, info) {
   // Lanyard Punch Hole at Top
   ctx.save()
   const holeX = W / 2 - 40
-  const holeY = 20
-  roundRect(ctx, holeX, holeY, 80, 20, 10)
-  ctx.fillStyle = '#031f10'
+  const holeY = 18
+  roundRect(ctx, holeX, holeY, 80, 18, 9)
+  ctx.fillStyle = isSunset ? '#140312' : (isOcean ? '#01080f' : '#02180d')
   ctx.fill()
   ctx.strokeStyle = goldAccent
   ctx.lineWidth = 3
@@ -593,16 +562,16 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.fillStyle = '#0B6839'
   ctx.font = 'bold 44px "Space Grotesk", sans-serif'
   ctx.textAlign = 'left'
-  ctx.fillText('HACKER HOUSE', headTextX, cardY + 84)
+  ctx.fillText('HACKER HOUSE', headTextX, cardY + 82)
 
   const hW = ctx.measureText('HACKER HOUSE').width
   ctx.fillStyle = '#FF2D84'
   ctx.font = 'bold 36px "Space Grotesk", sans-serif'
-  ctx.fillText('गोवा', headTextX + hW + 12, 80)
+  ctx.fillText('गोवा', headTextX + hW + 12, cardY + 80)
 
   ctx.fillStyle = '#063C20'
   ctx.font = '700 13px "JetBrains Mono", monospace'
-  ctx.fillText('2026 OFFICIAL BUILDER VIP PASS  ·  OCT 28–31, GOA', headTextX, cardY + 114)
+  ctx.fillText('2026 OFFICIAL BUILDER VIP PASS  ·  OCT 28–31, GOA', headTextX, cardY + 112)
 
   // Hero Photo Frame
   const photoSize = 360
@@ -611,7 +580,7 @@ async function drawIdCard(ctx, photo, assets, info) {
 
   ctx.save()
   roundRect(ctx, photoX - 8, photoY - 8, photoSize + 16, photoSize + 16, 24)
-  ctx.fillStyle = '#042815'
+  ctx.fillStyle = bgOuter
   ctx.fill()
   ctx.strokeStyle = goldAccent
   ctx.lineWidth = 5
@@ -652,7 +621,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.fillStyle = '#FAFAF8'
   drawAutoFitText(ctx, rawName, W / 2, nameY, cardW - 60, 48, 'Space Grotesk', 'bold', 'center')
 
-  // Builder Class Badge Pill (Fixed r=22 so no curved spikes occur!)
+  // Builder Class Badge Pill
   const bClass = (info.builderClass || 'Coastal Architect').toUpperCase()
   ctx.font = '800 17px "Space Grotesk", sans-serif'
   const bClassW = Math.min(cardW - 80, Math.max(260, ctx.measureText(bClass).width + 48))
@@ -689,7 +658,7 @@ async function drawIdCard(ctx, photo, assets, info) {
   const gridRows = Math.ceil(items.length / 2)
   const boxH = Math.max(260, gridRows * 76 + 24)
 
-  ctx.fillStyle = 'rgba(0,0,0,0.22)'
+  ctx.fillStyle = 'rgba(0,0,0,0.25)'
   roundRect(ctx, gridX, gridY, gridW, boxH, 20)
   ctx.fill()
   ctx.strokeStyle = goldAccent
@@ -732,9 +701,6 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.restore()
 }
 
-/* ==========================================
-   PROFILE / PFP FRAME ENGINE (2160×2160 2x HD)
-   ========================================== */
 async function drawPfp(ctx, photo, assets, info) {
   const SCALE = 2
   const LOGICAL_W = 1080, LOGICAL_H = 1080
@@ -746,11 +712,9 @@ async function drawPfp(ctx, photo, assets, info) {
 
   const W = LOGICAL_W, H = LOGICAL_H
 
-  // Background — Deep Emerald Base
   ctx.fillStyle = '#084D2A'
   ctx.fillRect(0, 0, W, H)
 
-  // Blend sunrise / agenda background
   if (assets.sunrise || assets.agenda) {
     const bgImg = assets.sunrise || assets.agenda
     ctx.save()
@@ -761,7 +725,6 @@ async function drawPfp(ctx, photo, assets, info) {
     ctx.restore()
   }
 
-  // Radial dark vignette
   const grad = ctx.createRadialGradient(W / 2, H / 2, 180, W / 2, H / 2, 600)
   grad.addColorStop(0, 'rgba(8,77,42,0.4)')
   grad.addColorStop(0.7, 'rgba(8,77,42,0.85)')
@@ -769,7 +732,6 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, W, H)
 
-  // Ornament border arch overlay
   if (assets.ornament) {
     ctx.save()
     ctx.globalAlpha = 0.38
@@ -777,7 +739,6 @@ async function drawPfp(ctx, photo, assets, info) {
     ctx.restore()
   }
 
-  // Palm trees vector along bottom
   if (assets.palmTrees) {
     ctx.save()
     ctx.globalAlpha = 0.45
@@ -787,7 +748,6 @@ async function drawPfp(ctx, photo, assets, info) {
     ctx.restore()
   }
 
-  // Header Yellow Bar
   ctx.fillStyle = '#F5D800'
   ctx.fillRect(0, 0, W, 90)
 
@@ -815,12 +775,10 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText('GOA, INDIA · OCT 28–31 · 2:47PM STUDIO', W / 2, 80)
 
-  // Central Photo Circle
   const photoR = 250
   const photoCX = W / 2
   const photoCY = H / 2 - 40
 
-  // Outer Glow
   const glowGrad = ctx.createRadialGradient(photoCX, photoCY, photoR - 20, photoCX, photoCY, photoR + 60)
   glowGrad.addColorStop(0, 'rgba(245,216,0,0.25)')
   glowGrad.addColorStop(1, 'rgba(245,216,0,0)')
@@ -829,7 +787,6 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.arc(photoCX, photoCY, photoR + 60, 0, Math.PI * 2)
   ctx.fill()
 
-  // Outer dashed ring
   ctx.beginPath()
   ctx.arc(photoCX, photoCY, photoR + 20, 0, Math.PI * 2)
   ctx.strokeStyle = 'rgba(245,216,0,0.35)'
@@ -838,7 +795,6 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.stroke()
   ctx.setLineDash([])
 
-  // Gold Ring
   ctx.beginPath()
   ctx.arc(photoCX, photoCY, photoR + 8, 0, Math.PI * 2)
   ctx.strokeStyle = '#F5D800'
@@ -847,7 +803,6 @@ async function drawPfp(ctx, photo, assets, info) {
 
   drawPhotoCircle(ctx, photo, photoCX, photoCY, photoR, info.photoZoom, info.photoPanX, info.photoPanY)
 
-  // Circular text wrapper around avatar
   ctx.save()
   ctx.font = '700 19px "JetBrains Mono", monospace'
   ctx.fillStyle = 'rgba(245,216,0,0.85)'
@@ -864,7 +819,6 @@ async function drawPfp(ctx, photo, assets, info) {
   }
   ctx.restore()
 
-  // Name Label
   if (info.name) {
     const rawName = info.name.toUpperCase()
     ctx.font = 'bold 42px "Space Grotesk", sans-serif'
@@ -884,7 +838,6 @@ async function drawPfp(ctx, photo, assets, info) {
     ctx.restore()
   }
 
-  // Footer bar
   ctx.fillStyle = 'rgba(0,0,0,0.7)'
   ctx.fillRect(0, H - 80, W, 80)
   ctx.fillStyle = '#F5D800'
@@ -898,9 +851,6 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.restore()
 }
 
-/* ==========================================
-   DYNAMIC TEAM FRAME ENGINE (2400×1260 2x HD)
-   ========================================== */
 async function drawTeamFrame(ctx, photos, assets, info) {
   const SCALE = 2
   const LOGICAL_W = 1200, LOGICAL_H = 630
@@ -912,7 +862,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
 
   const W = LOGICAL_W, H = LOGICAL_H
 
-  // Background scene
   const bgImg = assets.hackers || assets.buildersScene || assets.sunrise
   if (bgImg) {
     ctx.save()
@@ -925,7 +874,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.fillRect(0, 0, W, H)
   }
 
-  // Gradient overlay
   const overlayGrad = ctx.createLinearGradient(0, 0, 0, H)
   overlayGrad.addColorStop(0, 'rgba(5,44,23,0.9)')
   overlayGrad.addColorStop(0.5, 'rgba(5,44,23,0.7)')
@@ -933,7 +881,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
   ctx.fillStyle = overlayGrad
   ctx.fillRect(0, 0, W, H)
 
-  // Ornament border overlay
   if (assets.ornament) {
     ctx.save()
     ctx.globalAlpha = 0.22
@@ -941,7 +888,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.restore()
   }
 
-  // Palm tree vector footer
   if (assets.palmTrees) {
     ctx.save()
     ctx.globalAlpha = 0.35
@@ -951,7 +897,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.restore()
   }
 
-  // Top Header Banner
   ctx.fillStyle = '#F5D800'
   ctx.fillRect(0, 0, W, 76)
   ctx.fillStyle = '#0B6839'
@@ -963,7 +908,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
   ctx.font = '700 12px "JetBrains Mono", monospace'
   ctx.fillText('OCT 28–31, 2026  ✦  GOA, INDIA  ✦  SHIPPING FROM PARADISE', W / 2, 68)
 
-  // Team Size Calculation
   const activePhotos = photos.filter(Boolean)
   const count = Math.max(1, Math.min(4, activePhotos.length || 1))
 
@@ -982,14 +926,12 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     const cx = startX + i * (slotR * 2 + gap)
     const currentPhoto = activePhotos[i] || (i === 0 ? photos[0] : null)
 
-    // Glow ring
     const glw = ctx.createRadialGradient(cx, cy, slotR - 10, cx, cy, slotR + 36)
     glw.addColorStop(0, `rgba(${i % 2 === 0 ? '245,216,0' : '255,45,132'},0.35)`)
     glw.addColorStop(1, 'transparent')
     ctx.fillStyle = glw
     ctx.beginPath(); ctx.arc(cx, cy, slotR + 36, 0, Math.PI * 2); ctx.fill()
 
-    // Ring border
     ctx.beginPath()
     ctx.arc(cx, cy, slotR + 6, 0, Math.PI * 2)
     ctx.strokeStyle = i % 2 === 0 ? '#F5D800' : '#FF2D84'
@@ -998,7 +940,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
 
     drawPhotoCircle(ctx, currentPhoto, cx, cy, slotR, info.photoZoom, info.photoPanX, info.photoPanY)
 
-    // Member Name & Handle Label under circle
     const memberName = info.teamNames?.[i] || (i === 0 ? (info.name || 'You') : `Builder ${i + 1}`)
     ctx.fillStyle = '#FAFAF8'
     drawAutoFitText(ctx, memberName, cx, cy + slotR + 30, slotR * 2 + 20, 20, 'Space Grotesk', 'bold', 'center')
@@ -1009,7 +950,6 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     ctx.fillText(subHandle, cx, cy + slotR + 50)
   }
 
-  // Footer Banner
   ctx.fillStyle = 'rgba(0,0,0,0.85)'
   ctx.fillRect(0, H - 64, W, 64)
   ctx.fillStyle = '#F5D800'
@@ -1023,11 +963,8 @@ async function drawTeamFrame(ctx, photos, assets, info) {
   ctx.restore()
 }
 
-/* ==========================================
-   MAIN APPLICATION COMPONENT
-   ========================================== */
 export default function Page() {
-  const [step, setStep] = useState('landing') // landing | form
+  const [step, setStep] = useState('landing')
   const [activeFrame, setActiveFrame] = useState('boarding')
   const [userPhoto, setUserPhoto] = useState(null)
   const [teamPhotos, setTeamPhotos] = useState([null, null, null, null])
@@ -1065,13 +1002,12 @@ export default function Page() {
   })
   const [assetsLoaded, setAssetsLoaded] = useState(false)
   const [assets, setAssets] = useState({})
-  const [activeTab, setActiveTab] = useState('generator') // generator | hype
+  const [activeTab, setActiveTab] = useState('generator')
 
   const canvasRef = useRef(null)
   const fileInputRef = useRef(null)
   const teamFileRefs = [useRef(null), useRef(null), useRef(null), useRef(null)]
 
-  // Load brand assets
   useEffect(() => {
     async function load() {
       const [palmTrees, sunrise, hackers, ornament, logo, agenda, signpost, studio247, brandBanner, buildersScene] = await Promise.allSettled([
@@ -1103,7 +1039,6 @@ export default function Page() {
     load()
   }, [])
 
-  // Render canvas instantly using requestAnimationFrame (No lag!)
   useEffect(() => {
     if (!assetsLoaded || !canvasRef.current || (step !== 'result' && step !== 'form')) return
     const ctx = canvasRef.current.getContext('2d')
@@ -1124,7 +1059,6 @@ export default function Page() {
     return () => cancelAnimationFrame(animationFrameId)
   }, [activeFrame, userPhoto, teamPhotos, info, assetsLoaded, assets, step])
 
-  // Directional Nudge handlers
   const nudgePhoto = (dir) => {
     setInfo(prev => {
       let { photoPanX, photoPanY } = prev
@@ -1229,7 +1163,6 @@ export default function Page() {
 
   return (
     <div className="page-wrap">
-      {/* HEADER */}
       <header className="site-header">
         <div className="container header-inner">
           <button
@@ -1268,7 +1201,6 @@ export default function Page() {
 
       {activeTab === 'generator' && (
         <>
-          {/* LANDING PAGE */}
           {step === 'landing' && (
             <main className="landing">
               <section className="landing-hero">
@@ -1363,7 +1295,6 @@ export default function Page() {
             </main>
           )}
 
-          {/* FORM & CANVAS EDITOR STEP */}
           {(step === 'form' || step === 'result') && (
             <main className="form-step">
               <div className="container">
@@ -1376,7 +1307,6 @@ export default function Page() {
                   <p>Pick a style, add your details, and fine-tune your photo position.</p>
                 </div>
 
-                {/* Frame Style Switcher */}
                 <div className="frame-type-bar">
                   {FRAMES.map(f => (
                     <button
@@ -1392,9 +1322,7 @@ export default function Page() {
                 </div>
 
                 <div className="form-grid">
-                  {/* LEFT CONTROL PANEL */}
                   <div className="form-panel">
-                    {/* PHOTO UPLOAD */}
                     <div className="form-section">
                       <div className="form-section-title">1. PHOTO UPLOAD</div>
                       {!isTeam ? (
@@ -1420,7 +1348,6 @@ export default function Page() {
                             <div className="dz-sub">Supports JPG, PNG, HEIC, WEBP</div>
                           </div>
 
-                          {/* SMART PHOTO NUDGE & ZOOM CONTROLS */}
                           {hasPhoto && (
                             <div className="photo-controls-card">
                               <div className="photo-controls-title">POSITION & ZOOM ADAPTATION</div>
@@ -1460,7 +1387,6 @@ export default function Page() {
                           )}
                         </div>
                       ) : (
-                        /* TEAM PHOTOS */
                         <div className="team-slots">
                           {[0, 1, 2, 3].map((idx) => (
                             <div key={idx} className="team-slot">
@@ -1490,7 +1416,6 @@ export default function Page() {
                       )}
                     </div>
 
-                    {/* DETAILS FORM */}
                     <div className="form-section">
                       <div className="form-section-title">2. PERSONAL DETAILS & SOCIALS</div>
                       <div className="fields-col">
@@ -1676,7 +1601,6 @@ export default function Page() {
                     </div>
                   </div>
 
-                  {/* RIGHT CANVAS PREVIEW & EXPORT ACTIONS */}
                   <div className="preview-panel">
                     <div className="preview-label">LIVE ULTRA-HD PREVIEW</div>
                     <div className="canvas-wrap">
@@ -1704,7 +1628,6 @@ export default function Page() {
         </>
       )}
 
-      {/* HYPE CALCULATOR TAB */}
       {activeTab === 'hype' && (
         <main className="hype-page">
           <div className="container">
@@ -1766,10 +1689,8 @@ export default function Page() {
         </main>
       )}
 
-      {/* TOAST NOTIFICATION */}
       <div className={`toast${toast ? ' show' : ''}`}>{toast}</div>
 
-      {/* FOOTER */}
       <footer className="site-footer">
         <div className="container footer-inner">
           <div className="footer-brand">
