@@ -47,11 +47,11 @@ const Icons = {
 }
 
 /* ==========================================
-   BUILDER CLASS GENERATOR
+   BUILDER CLASS GENERATOR (30+ Creative Titles)
    ========================================== */
 const BUILDER_CLASSES = [
   'Coastal Architect',
-  'Async Artisan',
+  'Async Alchemist',
   'Terminal Nomad',
   'Ship-or-Die Monk',
   'Recursive Dreamer',
@@ -65,6 +65,22 @@ const BUILDER_CLASSES = [
   'Merge Conflict Mystic',
   'Coconut Compiler',
   'Goa Protocol Pioneer',
+  'Vite Vibe Coder',
+  'CUDA Coconut',
+  'Zero-Knowledge Yogi',
+  'Hackathon Heavyweight',
+  'Monad Monk',
+  'Solana Sunset Ship',
+  'Rust Rustler',
+  'CSS Calangute',
+  'Prompt Pirate',
+  'Payload Paraglider',
+  'Fullstack Flamingo',
+  'Byte Baga Coder',
+  'Kernel Kadam',
+  'Wasm Wave Rider',
+  'DevRel Driftwood',
+  'Bounty Beachhead',
 ]
 
 function randomBuilderClass() {
@@ -153,8 +169,19 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 /**
-  Smart Auto-Cover Photo Fitting Engine
+  Dynamic Font Scaling Helper: Scales font size down automatically to fit max width gracefully without clipping
  */
+function drawAutoFitText(ctx, text, x, y, maxW, baseFontSize, fontFace = 'Space Grotesk', weight = 'bold', align = 'center') {
+  let size = baseFontSize
+  ctx.font = `${weight} ${size}px "${fontFace}", sans-serif`
+  while (ctx.measureText(text).width > maxW && size > 11) {
+    size -= 1
+    ctx.font = `${weight} ${size}px "${fontFace}", sans-serif`
+  }
+  ctx.textAlign = align
+  ctx.fillText(text, x, y)
+}
+
 function drawPhoto(ctx, photo, x, y, w, h, zoom = 1, panX = 0, panY = 0) {
   if (!photo) {
     ctx.fillStyle = 'rgba(5, 44, 23, 0.6)'
@@ -240,12 +267,12 @@ function drawDotGrid(ctx, x, y, w, h, color = 'rgba(11,104,57,0.05)', spacing = 
   }
 }
 
-function drawBarcode(ctx, x, y, w, h) {
+function drawBarcode(ctx, x, y, w, h, color = 'rgba(11,104,57,0.8)') {
   const bars = 44
   const barW = w / bars
   for (let i = 0; i < bars; i++) {
     const thick = Math.random() > 0.6 ? barW * 0.85 : barW * 0.4
-    ctx.fillStyle = `rgba(11,104,57,${0.5 + Math.random() * 0.5})`
+    ctx.fillStyle = color
     ctx.fillRect(x + i * barW + (barW - thick) / 2, y, thick, h)
   }
 }
@@ -265,6 +292,9 @@ function collectSocials(info) {
   }
   if (info.instagram && info.instagram.trim()) {
     items.push({ platform: 'Instagram', label: 'INSTAGRAM', val: `@${info.instagram.trim().replace(/^@/, '')}` })
+  }
+  if (info.email && info.email.trim()) {
+    items.push({ platform: 'Email', label: 'EMAIL', val: info.email.trim() })
   }
   if (info.website && info.website.trim()) {
     const cleanWeb = info.website.trim().replace(/^https?:\/\//, '')
@@ -331,17 +361,14 @@ async function drawBoardingPass(ctx, photo, assets, info) {
 
   drawPhotoCircle(ctx, photo, photoCX, photoCY, photoR, info.photoZoom, info.photoPanX, info.photoPanY)
 
-  // Passenger Name on Stub
+  // Passenger Name on Stub using drawAutoFitText
   const displayName = (info.name || 'YOUR NAME').toUpperCase()
   ctx.fillStyle = '#FAFAF8'
-  ctx.font = 'bold 22px "Space Grotesk", sans-serif'
-  ctx.textAlign = 'center'
-  ctx.fillText(displayName.length > 16 ? displayName.slice(0, 16) + '…' : displayName, STUB / 2, photoCY + photoR + 32)
+  drawAutoFitText(ctx, displayName, STUB / 2, photoCY + photoR + 32, STUB - 36, 22, 'Space Grotesk', 'bold', 'center')
 
-  // Builder Class Tag
+  // Builder Class Tag using drawAutoFitText
   ctx.fillStyle = '#FF2D84'
-  ctx.font = '800 15px "Space Grotesk", sans-serif'
-  ctx.fillText((info.builderClass || 'Coastal Architect').toUpperCase(), STUB / 2, photoCY + photoR + 54)
+  drawAutoFitText(ctx, (info.builderClass || 'Coastal Architect').toUpperCase(), STUB / 2, photoCY + photoR + 54, STUB - 36, 14, 'Space Grotesk', '800', 'center')
 
   // Stub bottom tag
   ctx.fillStyle = '#F5D800'
@@ -406,7 +433,7 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     fields.push({ label: s.label, val: s.val })
   })
 
-  // Render fields in 2 columns
+  // Render fields in 2 columns using drawAutoFitText
   const fieldYStart = 152
   const rowHeight = 48
   const colW = (contentW - 30) / 2
@@ -423,9 +450,7 @@ async function drawBoardingPass(ctx, photo, assets, info) {
     ctx.fillText(field.label, fx, fy)
 
     ctx.fillStyle = '#052C17'
-    ctx.font = 'bold 15px "Space Grotesk", sans-serif'
-    const displayV = field.val.length > 22 ? field.val.slice(0, 22) + '…' : field.val
-    ctx.fillText(displayV, fx, fy + 20)
+    drawAutoFitText(ctx, field.val, fx, fy + 20, colW, 15, 'Space Grotesk', 'bold', 'left')
   })
 
   // Barcode section
@@ -450,17 +475,27 @@ async function drawBoardingPass(ctx, photo, assets, info) {
 
 /* ==========================================
    VIP BUILDER ID CARD ENGINE (1080×1350)
+   Full Vertical Layout & Theme Adaptations
    ========================================== */
 async function drawIdCard(ctx, photo, assets, info) {
   const W = 1080, H = 1350
   ctx.canvas.width = W
   ctx.canvas.height = H
 
-  // Deep Emerald Background
-  ctx.fillStyle = '#052C17'
+  const theme = info.idTheme || 'emerald'
+  const isSunset = theme === 'sunset'
+  const isOcean = theme === 'ocean'
+
+  const bgDark = isSunset ? '#2A0B22' : (isOcean ? '#041B2D' : '#052C17')
+  const cardBg = isSunset ? 'rgba(74, 14, 58, 0.94)' : (isOcean ? 'rgba(8, 45, 74, 0.94)' : 'rgba(9,78,42,0.92)')
+  const goldAccent = isSunset ? '#F5D800' : (isOcean ? '#00E5FF' : '#F5D800')
+  const pinkAccent = isSunset ? '#FF2D84' : (isOcean ? '#00E5FF' : '#FF2D84')
+
+  // Base Background
+  ctx.fillStyle = bgDark
   ctx.fillRect(0, 0, W, H)
 
-  // Composite Brand Sunrise Background
+  // Composite Brand Sunrise / Backdrop
   if (assets.sunrise || assets.agenda) {
     const bgImg = assets.sunrise || assets.agenda
     ctx.save()
@@ -492,33 +527,33 @@ async function drawIdCard(ctx, photo, assets, info) {
   // Lanyard Punch Hole at Top
   ctx.save()
   const holeX = W / 2 - 40
-  const holeY = 24
+  const holeY = 20
   roundRect(ctx, holeX, holeY, 80, 20, 10)
   ctx.fillStyle = '#031f10'
   ctx.fill()
-  ctx.strokeStyle = '#F5D800'
+  ctx.strokeStyle = goldAccent
   ctx.lineWidth = 3
   ctx.stroke()
   ctx.restore()
 
-  // Inner VIP Card Container
-  const pad = 44
+  // Inner VIP Card Container (Fills the card gracefully!)
+  const pad = 40
   const cardW = W - pad * 2
-  const cardH = H - pad * 2 - 20
+  const cardH = H - pad * 2 - 10
   const cardX = pad
-  const cardY = pad + 20
+  const cardY = pad + 15
 
   ctx.save()
   roundRect(ctx, cardX, cardY, cardW, cardH, 28)
-  ctx.fillStyle = 'rgba(9,78,42,0.92)'
+  ctx.fillStyle = cardBg
   ctx.fill()
-  ctx.strokeStyle = 'rgba(245,216,0,0.5)'
+  ctx.strokeStyle = goldAccent
   ctx.lineWidth = 4
   ctx.stroke()
   ctx.restore()
 
   // Yellow Header Strip with Logo
-  ctx.fillStyle = '#F5D800'
+  ctx.fillStyle = goldAccent
   roundRect(ctx, cardX + 24, cardY + 24, cardW - 48, 116, 20)
   ctx.fill()
 
@@ -556,22 +591,22 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.fillText('2026 OFFICIAL BUILDER VIP PASS  ·  OCT 28–31, GOA', headTextX, cardY + 114)
 
   // Hero Photo Frame
-  const photoSize = 340
+  const photoSize = 360
   const photoX = W / 2 - photoSize / 2
-  const photoY = cardY + 175
+  const photoY = cardY + 165
 
   ctx.save()
   roundRect(ctx, photoX - 8, photoY - 8, photoSize + 16, photoSize + 16, 24)
   ctx.fillStyle = '#042815'
   ctx.fill()
-  ctx.strokeStyle = '#F5D800'
+  ctx.strokeStyle = goldAccent
   ctx.lineWidth = 5
   ctx.stroke()
   ctx.restore()
 
   ctx.save()
   roundRect(ctx, photoX - 3, photoY - 3, photoSize + 6, photoSize + 6, 20)
-  ctx.strokeStyle = '#FF2D84'
+  ctx.strokeStyle = pinkAccent
   ctx.lineWidth = 3
   ctx.stroke()
   ctx.restore()
@@ -582,11 +617,11 @@ async function drawIdCard(ctx, photo, assets, info) {
   const sealX = photoX + photoSize - 20
   const sealY = photoY + photoSize - 20
   ctx.save()
-  ctx.fillStyle = '#FF2D84'
+  ctx.fillStyle = pinkAccent
   ctx.beginPath()
   ctx.arc(sealX, sealY, 44, 0, Math.PI * 2)
   ctx.fill()
-  ctx.strokeStyle = '#F5D800'
+  ctx.strokeStyle = goldAccent
   ctx.lineWidth = 4
   ctx.stroke()
 
@@ -597,35 +632,32 @@ async function drawIdCard(ctx, photo, assets, info) {
   ctx.fillText('VIP 2026', sealX, sealY + 10)
   ctx.restore()
 
-  // Builder Name
-  const nameY = photoY + photoSize + 54
+  // Builder Name (Using Auto-Fit Font Scaling)
+  const nameY = photoY + photoSize + 55
   const rawName = (info.name || 'YOUR NAME').toUpperCase()
   ctx.fillStyle = '#FAFAF8'
-  ctx.font = 'bold 48px "Space Grotesk", sans-serif'
-  ctx.textAlign = 'center'
-  ctx.fillText(rawName.length > 18 ? rawName.slice(0, 18) + '…' : rawName, W / 2, nameY)
+  drawAutoFitText(ctx, rawName, W / 2, nameY, cardW - 60, 48, 'Space Grotesk', 'bold', 'center')
 
-  // Builder Class Badge
+  // Builder Class Badge Pill (Fixed r=22 so no curved spikes occur!)
   const bClass = (info.builderClass || 'Coastal Architect').toUpperCase()
   ctx.font = '800 17px "Space Grotesk", sans-serif'
-  const bClassW = Math.max(250, ctx.measureText(bClass).width + 48)
-  ctx.fillStyle = '#FF2D84'
-  roundRect(ctx, W / 2 - bClassW / 2, nameY + 14, bClassW, 44, 100)
+  const bClassW = Math.min(cardW - 80, Math.max(260, ctx.measureText(bClass).width + 48))
+  ctx.fillStyle = pinkAccent
+  roundRect(ctx, W / 2 - bClassW / 2, nameY + 18, bClassW, 44, 22)
   ctx.fill()
   ctx.fillStyle = '#FAFAF8'
   ctx.textAlign = 'center'
-  ctx.fillText(bClass, W / 2, nameY + 42)
+  drawAutoFitText(ctx, bClass, W / 2, nameY + 46, bClassW - 20, 17, 'Space Grotesk', '800', 'center')
 
-  // Multi-Social & Info Grid
-  const gridY = nameY + 76
-  const gridW = cardW - 72
-  const gridX = cardX + 36
+  // Multi-Social & Info Grid Container (Spans full height!)
+  const gridY = nameY + 86
+  const gridW = cardW - 64
+  const gridX = cardX + 32
 
   const items = []
   if (info.role || info.location) {
     items.push({ label: 'ROLE & LOCATION', val: `${info.role || 'Builder'} · ${info.location || 'India'}` })
   }
-
   if (info.stack && info.stack.trim()) {
     items.push({ label: 'TECH STACK', val: info.stack.trim() })
   }
@@ -636,48 +668,53 @@ async function drawIdCard(ctx, photo, assets, info) {
   if (items.length === 0) {
     items.push({ label: 'STATUS', val: '247 BUILDERS SELECTED' })
     items.push({ label: 'VENUE', val: 'GOA, INDIA' })
+    items.push({ label: 'ACCESS', val: 'FULL BEACH RESORT PASS' })
+    items.push({ label: 'STUDIO', val: '2:47 PM STUDIO' })
   }
 
   const gridRows = Math.ceil(items.length / 2)
-  const boxH = Math.max(90, gridRows * 52 + 20)
+  const boxH = Math.max(260, gridRows * 76 + 24)
 
-  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.fillStyle = 'rgba(0,0,0,0.22)'
   roundRect(ctx, gridX, gridY, gridW, boxH, 20)
   ctx.fill()
-  ctx.strokeStyle = 'rgba(245,216,0,0.25)'
+  ctx.strokeStyle = goldAccent
   ctx.lineWidth = 1.5
   ctx.stroke()
 
-  const colWidth = (gridW - 48) / 2
-  items.slice(0, 6).forEach((item, idx) => {
+  const colWidth = (gridW - 44) / 2
+  items.slice(0, 8).forEach((item, idx) => {
     const colIdx = idx % 2
     const rowIdx = Math.floor(idx / 2)
-    const fx = gridX + 24 + colIdx * (colWidth + 24)
-    const fy = gridY + 22 + rowIdx * 50
+    const fx = gridX + 22 + colIdx * (colWidth + 20)
+    const fy = gridY + 24 + rowIdx * 72
 
-    ctx.fillStyle = 'rgba(245,216,0,0.85)'
+    // Card tile background
+    ctx.fillStyle = 'rgba(255,255,255,0.05)'
+    roundRect(ctx, fx - 10, fy - 16, colWidth, 62, 12)
+    ctx.fill()
+
+    ctx.fillStyle = goldAccent
     ctx.font = '700 11px "JetBrains Mono", monospace'
     ctx.textAlign = 'left'
     ctx.fillText(item.label, fx, fy)
 
     ctx.fillStyle = '#FAFAF8'
-    ctx.font = '600 15px "Space Grotesk", sans-serif'
-    const displayVal = item.val.length > 22 ? item.val.slice(0, 22) + '…' : item.val
-    ctx.fillText(displayVal, fx, fy + 20)
+    drawAutoFitText(ctx, item.val, fx, fy + 24, colWidth - 20, 15, 'Space Grotesk', '600', 'left')
   })
 
-  // Footer Barcode
-  const footerY = gridY + boxH + 16
-  ctx.fillStyle = 'rgba(245,216,0,0.08)'
-  roundRect(ctx, gridX, footerY, gridW, 70, 16)
+  // Footer Barcode (Anchored cleanly at bottom of card!)
+  const footerY = cardY + cardH - 120
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'
+  roundRect(ctx, gridX, footerY, gridW, 80, 16)
   ctx.fill()
 
-  drawBarcode(ctx, gridX + 16, footerY + 10, gridW - 32, 30)
+  drawBarcode(ctx, gridX + 20, footerY + 14, gridW - 40, 32, goldAccent)
 
-  ctx.fillStyle = '#F5D800'
+  ctx.fillStyle = goldAccent
   ctx.font = '700 13px "JetBrains Mono", monospace'
   ctx.textAlign = 'center'
-  ctx.fillText(`PASS ID: ${info.builderId || 'HH26-VIP247'}  ·  #FrameInGoa  ·  2:47PM STUDIO`, W / 2, footerY + 56)
+  ctx.fillText(`PASS ID: ${info.builderId || 'HH26-VIP247'}  ·  #FrameInGoa  ·  2:47PM STUDIO`, W / 2, footerY + 64)
 }
 
 /* ==========================================
@@ -806,15 +843,15 @@ async function drawPfp(ctx, photo, assets, info) {
   }
   ctx.restore()
 
-  // Name Label positioned further down with dark backdrop pill
+  // Name Label positioned further down with clean rounded rectangle pill (Fixed r=16!)
   if (info.name) {
     const rawName = info.name.toUpperCase()
     ctx.font = 'bold 42px "Space Grotesk", sans-serif'
-    const nameW = ctx.measureText(rawName).width
+    const nameW = Math.min(W - 120, ctx.measureText(rawName).width)
     const nameY = photoCY + photoR + 105
 
     ctx.save()
-    roundRect(ctx, W / 2 - (nameW + 48) / 2, nameY - 38, nameW + 48, 54, 100)
+    roundRect(ctx, W / 2 - (nameW + 48) / 2, nameY - 38, nameW + 48, 54, 16)
     ctx.fillStyle = 'rgba(5, 44, 23, 0.95)'
     ctx.fill()
     ctx.strokeStyle = '#F5D800'
@@ -822,8 +859,7 @@ async function drawPfp(ctx, photo, assets, info) {
     ctx.stroke()
 
     ctx.fillStyle = '#FAFAF8'
-    ctx.textAlign = 'center'
-    ctx.fillText(rawName, W / 2, nameY)
+    drawAutoFitText(ctx, rawName, W / 2, nameY, nameW + 20, 42, 'Space Grotesk', 'bold', 'center')
     ctx.restore()
   }
 
@@ -936,9 +972,7 @@ async function drawTeamFrame(ctx, photos, assets, info) {
     // Member Name & Handle Label under circle
     const memberName = info.teamNames?.[i] || (i === 0 ? (info.name || 'You') : `Builder ${i + 1}`)
     ctx.fillStyle = '#FAFAF8'
-    ctx.font = 'bold 20px "Space Grotesk", sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(memberName, cx, cy + slotR + 30)
+    drawAutoFitText(ctx, memberName, cx, cy + slotR + 30, slotR * 2 + 20, 20, 'Space Grotesk', 'bold', 'center')
 
     const subHandle = i === 0 && info.handle ? `@${info.handle}` : `BUILDER 0${i + 1}`
     ctx.fillStyle = '#F5D800'
@@ -976,8 +1010,10 @@ export default function Page() {
     linkedin: '',
     github: '',
     instagram: '',
+    email: '',
     website: '',
     location: '',
+    idTheme: 'emerald',
     photoZoom: 1.0,
     photoPanX: 0,
     photoPanY: 0,
@@ -1503,6 +1539,17 @@ export default function Page() {
 
                         <div className="fields-row">
                           <div className="field-wrap">
+                            <label className="field-label">EMAIL ADDRESS</label>
+                            <input
+                              type="email"
+                              className="field-input"
+                              placeholder="e.g. builder@domain.com"
+                              value={info.email}
+                              onChange={(e) => updateInfo('email', e.target.value)}
+                              id="input-email"
+                            />
+                          </div>
+                          <div className="field-wrap">
                             <label className="field-label">PORTFOLIO / WEB</label>
                             <input
                               type="text"
@@ -1513,6 +1560,9 @@ export default function Page() {
                               id="input-website"
                             />
                           </div>
+                        </div>
+
+                        <div className="fields-row">
                           <div className="field-wrap">
                             <label className="field-label">LOCATION</label>
                             <input
@@ -1524,19 +1574,40 @@ export default function Page() {
                               id="input-location"
                             />
                           </div>
+                          <div className="field-wrap">
+                            <label className="field-label">TECH STACK</label>
+                            <input
+                              type="text"
+                              className="field-input"
+                              placeholder="e.g. Next.js, Rust, Solidity, AI"
+                              value={info.stack}
+                              onChange={(e) => updateInfo('stack', e.target.value)}
+                              id="input-stack"
+                            />
+                          </div>
                         </div>
 
-                        <div className="field-wrap">
-                          <label className="field-label">TECH STACK</label>
-                          <input
-                            type="text"
-                            className="field-input"
-                            placeholder="e.g. Next.js, Rust, Solidity, AI"
-                            value={info.stack}
-                            onChange={(e) => updateInfo('stack', e.target.value)}
-                            id="input-stack"
-                          />
-                        </div>
+                        {activeFrame === 'id-card' && (
+                          <div className="field-wrap">
+                            <label className="field-label">VIP ID CARD THEME</label>
+                            <div className="theme-selector-row">
+                              {[
+                                ['emerald', '🌴 Emerald & Gold'],
+                                ['sunset', '🌅 Sunset Twilight'],
+                                ['ocean', '🌊 Arabian Blue'],
+                              ].map(([tKey, tLabel]) => (
+                                <button
+                                  key={tKey}
+                                  type="button"
+                                  className={`btn-theme${info.idTheme === tKey ? ' active' : ''}`}
+                                  onClick={() => updateInfo('idTheme', tKey)}
+                                >
+                                  {tLabel}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         <div className="field-wrap">
                           <label className="field-label">BUILDER CLASS</label>
