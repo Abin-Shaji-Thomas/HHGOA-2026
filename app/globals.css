@@ -624,6 +624,52 @@ a { text-decoration: none; color: inherit; }
 }
 .btn-reset-photo:hover { background: rgba(255,255,255,0.12); color: var(--white); }
 
+/* Directional Nudge Pad Controls */
+.nudge-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(0,0,0,0.2);
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.nudge-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  grid-template-rows: repeat(3, 32px);
+  gap: 4px;
+}
+.btn-nudge {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: var(--r-sm);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.btn-nudge:hover {
+  background: rgba(245,216,0,0.25);
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.btn-nudge.empty {
+  visibility: hidden;
+  pointer-events: none;
+}
+.nudge-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
 /* Team slots */
 .team-slots {
   display: grid;
