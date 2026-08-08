@@ -3,6 +3,50 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 
 /* ==========================================
+   SVG ICONS
+   ========================================== */
+const Icons = {
+  Ticket: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+      <path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/>
+    </svg>
+  ),
+  IdCard: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h3v3H7z"/><path d="M14 8h3"/><path d="M14 12h3"/><path d="M7 16h10"/>
+    </svg>
+  ),
+  User: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+  Users: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M22 21v-2a4 4 0 0 1 0-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  ),
+  Share: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  ),
+  Download: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+  ),
+  Twitter: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  ),
+}
+
+/* ==========================================
    BUILDER CLASS GENERATOR
    ========================================== */
 const BUILDER_CLASSES = [
@@ -61,7 +105,14 @@ const FRAMES = [
 /* ==========================================
    SCORE CALCULATOR
    ========================================== */
-function calcScore({ likes = 0, replies = 0, bookmarks = 0, retweets = 0, quotes = 0, views = 0 }) {
+function calcScore(inputs) {
+  const likes = parseInt(inputs.likes) || 0
+  const replies = parseInt(inputs.replies) || 0
+  const bookmarks = parseInt(inputs.bookmarks) || 0
+  const retweets = parseInt(inputs.retweets) || 0
+  const quotes = parseInt(inputs.quotes) || 0
+  const views = parseInt(inputs.views) || 0
+
   const pts = likes * 1 + replies * 2 + bookmarks * 3 + retweets * 4 + quotes * 4 + views * 0.02
   return Math.min(100, Math.max(0, Math.round((pts / 500) * 100)))
 }
@@ -706,10 +757,10 @@ async function drawPfp(ctx, photo, assets, info) {
   ctx.textAlign = 'center'
   ctx.fillText('GOA, INDIA · OCT 28–31 · 2:47PM STUDIO', W / 2, 80)
 
-  // Central Photo Circle
-  const photoR = 300
+  // Central Photo Circle (Reduced radius & shifted up for clean non-overlapping name placement)
+  const photoR = 270
   const photoCX = W / 2
-  const photoCY = H / 2 + 18
+  const photoCY = H / 2 - 20
 
   // Outer Glow
   const glowGrad = ctx.createRadialGradient(photoCX, photoCY, photoR - 20, photoCX, photoCY, photoR + 60)
@@ -755,12 +806,25 @@ async function drawPfp(ctx, photo, assets, info) {
   }
   ctx.restore()
 
-  // Name Label
+  // Name Label with dark backdrop pill for maximum legibility & zero overlap
   if (info.name) {
+    const rawName = info.name.toUpperCase()
+    ctx.font = 'bold 44px "Space Grotesk", sans-serif'
+    const nameW = ctx.measureText(rawName).width
+    const nameY = photoCY + photoR + 68
+
+    ctx.save()
+    roundRect(ctx, W / 2 - (nameW + 48) / 2, nameY - 40, nameW + 48, 56, 100)
+    ctx.fillStyle = 'rgba(5, 44, 23, 0.92)'
+    ctx.fill()
+    ctx.strokeStyle = '#F5D800'
+    ctx.lineWidth = 2
+    ctx.stroke()
+
     ctx.fillStyle = '#FAFAF8'
-    ctx.font = 'bold 48px "Space Grotesk", sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText(info.name.toUpperCase(), W / 2, photoCY + photoR + 66)
+    ctx.fillText(rawName, W / 2, nameY)
+    ctx.restore()
   }
 
   // Footer bar
@@ -898,7 +962,7 @@ async function drawTeamFrame(ctx, photos, assets, info) {
    MAIN APPLICATION COMPONENT
    ========================================== */
 export default function Page() {
-  const [step, setStep] = useState('landing') // landing | form | result
+  const [step, setStep] = useState('landing') // landing | form
   const [activeFrame, setActiveFrame] = useState('boarding')
   const [userPhoto, setUserPhoto] = useState(null)
   const [teamPhotos, setTeamPhotos] = useState([null, null, null, null])
@@ -924,7 +988,14 @@ export default function Page() {
 
   const [isDragging, setIsDragging] = useState(false)
   const [toast, setToast] = useState('')
-  const [scoreInputs, setScoreInputs] = useState({ likes: 0, replies: 0, bookmarks: 0, retweets: 0, quotes: 0, views: 0 })
+  const [scoreInputs, setScoreInputs] = useState({
+    likes: '',
+    replies: '',
+    bookmarks: '',
+    retweets: '',
+    quotes: '',
+    views: '',
+  })
   const [assetsLoaded, setAssetsLoaded] = useState(false)
   const [assets, setAssets] = useState({})
   const [activeTab, setActiveTab] = useState('generator') // generator | hype
@@ -1011,7 +1082,6 @@ export default function Page() {
         } else {
           setUserPhoto(img)
           setHasPhoto(true)
-          // Reset pan offsets to centered cover on new image upload
           setInfo(prev => ({ ...prev, photoPanX: 0, photoPanY: 0, photoZoom: 1.0 }))
         }
       }
@@ -1040,7 +1110,6 @@ export default function Page() {
     }, 'image/png')
   }
 
-  // Pre-filled tweet share flow with live link
   const handleShareX = async () => {
     const text = makeShareText(info.name, info.builderClass)
     const encoded = encodeURIComponent(text)
@@ -1049,13 +1118,12 @@ export default function Page() {
       canvasRef.current.toBlob(async (blob) => {
         try {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
-          showToast('Image copied to clipboard! Attach to tweet.')
+          showToast('Image copied to clipboard!')
         } catch { }
       })
     }
   }
 
-  // Web Share API to share image file directly on supported devices
   const handleWebShare = async () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -1507,16 +1575,16 @@ export default function Page() {
                       <canvas ref={canvasRef} />
                     </div>
 
-                    <div className="result-actions" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div className="result-actions">
                       <button className="btn-share-x" onClick={handleShareX} id="btn-share-x">
-                        Post on X with #FrameInGoa
+                        <Icons.Twitter /> Post on X with #FrameInGoa
                       </button>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <button className="btn-download-primary" onClick={handleDownload} style={{ flex: 1 }} id="btn-download">
-                          Download PNG
+                      <div className="result-action-secondary">
+                        <button className="btn-download" onClick={handleDownload} id="btn-download">
+                          <Icons.Download /> Download PNG
                         </button>
-                        <button className="btn-share-secondary" onClick={handleWebShare} style={{ flex: 1 }} id="btn-web-share">
-                          Share File
+                        <button className="btn-edit" onClick={handleWebShare} id="btn-web-share">
+                          <Icons.Share /> Share File
                         </button>
                       </div>
                     </div>
@@ -1530,39 +1598,60 @@ export default function Page() {
 
       {/* HYPE CALCULATOR TAB */}
       {activeTab === 'hype' && (
-        <main className="hype-step">
+        <main className="hype-page">
           <div className="container">
-            <div className="hype-card">
-              <div className="hype-header">
-                <h2>HH Goa Selection Tracker</h2>
-                <p>Plug in your X post metrics to calculate your radar score.</p>
-              </div>
+            <div className="hype-hero">
+              <h2>Selection <span>Radar Score</span></h2>
+              <p>Plug in your X post stats to calculate your candidate score for Hacker House Goa 2026 selection.</p>
+            </div>
 
-              <div className="hype-grid">
+            <div className="hype-grid">
+              <div className="hype-inputs">
                 {[
-                  ['likes', 'Likes'],
-                  ['retweets', 'Reposts'],
-                  ['replies', 'Replies'],
-                  ['bookmarks', 'Bookmarks'],
-                  ['quotes', 'Quote Tweets'],
-                  ['views', 'Total Views'],
-                ].map(([key, label]) => (
-                  <div className="hype-field" key={key}>
-                    <label>{label}</label>
+                  ['likes', 'Likes', '× 1 pt'],
+                  ['retweets', 'Reposts', '× 4 pts'],
+                  ['replies', 'Replies', '× 2 pts'],
+                  ['bookmarks', 'Bookmarks', '× 3 pts'],
+                  ['quotes', 'Quotes', '× 4 pts'],
+                  ['views', 'Views', '× 0.02 pt'],
+                ].map(([key, label, mult]) => (
+                  <div className="hype-input-card" key={key}>
+                    <div className="hype-input-top">
+                      <span className="hype-label">{label}</span>
+                      <span className="hype-mult">{mult}</span>
+                    </div>
                     <input
                       type="number"
-                      min="0"
+                      className="hype-num-input"
+                      placeholder="0"
                       value={scoreInputs[key]}
-                      onChange={(e) => setScoreInputs(prev => ({ ...prev, [key]: parseInt(e.target.value) || 0 }))}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setScoreInputs(prev => ({ ...prev, [key]: val }))
+                      }}
+                      id={`hype-input-${key}`}
                     />
                   </div>
                 ))}
               </div>
 
-              <div className="score-display-box" style={{ borderColor: verd.color }}>
-                <div className="score-num" style={{ color: verd.color }}>{score}</div>
-                <div className="score-label">SELECTION RADAR SCORE / 100</div>
-                <div className="score-verdict">{verd.text}</div>
+              <div className="hype-result">
+                <div className="hype-result-label">CANDIDATE SELECTION SCORE</div>
+                <div className="hype-score-number" style={{ color: verd.color }}>
+                  {score} <span>/ 100</span>
+                </div>
+
+                <div className="hype-bar-track">
+                  <div className="hype-bar-fill" style={{ width: `${score}%`, background: verd.color }} />
+                </div>
+
+                <div className="hype-verdict" style={{ color: verd.color }}>
+                  {verd.text}
+                </div>
+
+                <div className="hype-tip">
+                  <strong>Pro Tip:</strong> Post your pass with <strong>#FrameInGoa</strong> on X. Quality replies and reposts carry the highest weight in the radar formula.
+                </div>
               </div>
             </div>
           </div>
@@ -1570,17 +1659,18 @@ export default function Page() {
       )}
 
       {/* TOAST NOTIFICATION */}
-      {toast && <div className="toast-msg">{toast}</div>}
+      <div className={`toast${toast ? ' show' : ''}`}>{toast}</div>
 
       {/* FOOTER */}
       <footer className="site-footer">
         <div className="container footer-inner">
           <div className="footer-brand">
-            <strong>Hacker House Goa 2026</strong>
-            <span>Oct 28–31, 2026 · Goa, India</span>
+            Hacker House Goa 2026
           </div>
           <div className="footer-links">
             <a href="https://hhgoa.com" target="_blank" rel="noopener noreferrer">hhgoa.com</a>
+            <span>·</span>
+            <span>Oct 28–31, 2026 · Goa, India</span>
             <span>·</span>
             <span>Powered by 2:47PM Studio</span>
           </div>
