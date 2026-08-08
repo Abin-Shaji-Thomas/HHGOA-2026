@@ -1165,13 +1165,18 @@ export default function Page() {
       {/* HEADER */}
       <header className="site-header">
         <div className="container header-inner">
-          <a href="https://hhgoa.com" target="_blank" rel="noopener noreferrer" className="logo-lockup" id="site-logo">
+          <button
+            className="logo-lockup"
+            onClick={() => { setActiveTab('generator'); setStep('landing'); }}
+            id="site-logo"
+            style={{ background: 'transparent', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer' }}
+          >
             <img src="/assets/logo.jpeg" alt="HH Goa Logo" className="header-logo-img" />
             <div className="logo-text">
               <strong>Frame In Goa</strong>
               <span>2026 EDITION · 2:47PM STUDIO</span>
             </div>
-          </a>
+          </button>
           <nav className="header-nav">
             <button
               className={`nav-tab${activeTab === 'generator' ? ' active' : ''}`}
