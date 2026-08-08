@@ -902,7 +902,10 @@ async function drawTeamFrame(ctx, photos, assets, info) {
   ctx.fillStyle = '#0B6839'
   ctx.font = 'bold 36px "Space Grotesk", sans-serif'
   ctx.textAlign = 'center'
-  ctx.fillText('HACKER HOUSE GOA 2026  ·  TEAM SQUAD', W / 2, 48)
+  const teamHeading = info.teamName && info.teamName.trim()
+    ? `TEAM ${info.teamName.trim().toUpperCase()}  ·  HH GOA 2026`
+    : 'HACKER HOUSE GOA 2026  ·  TEAM SQUAD'
+  drawAutoFitText(ctx, teamHeading, W / 2, 48, W - 80, 34, 'Space Grotesk', 'bold', 'center')
 
   ctx.fillStyle = '#0B6839'
   ctx.font = '700 12px "JetBrains Mono", monospace'
@@ -987,6 +990,7 @@ export default function Page() {
     photoPanY: 0,
     builderClass: randomBuilderClass(),
     builderId: generateBuilderId(),
+    teamName: '',
     teamNames: ['', '', '', ''],
   })
 
@@ -1387,31 +1391,44 @@ export default function Page() {
                           )}
                         </div>
                       ) : (
-                        <div className="team-slots">
-                          {[0, 1, 2, 3].map((idx) => (
-                            <div key={idx} className="team-slot">
-                              <div
-                                className={`team-slot-drop${teamPhotos[idx] ? ' filled' : ''}`}
-                                onClick={() => teamFileRefs[idx].current?.click()}
-                              >
+                        <div>
+                          <div className="field-wrap" style={{ marginBottom: '14px' }}>
+                            <label className="field-label">TEAM SQUAD NAME</label>
+                            <input
+                              type="text"
+                              className="field-input"
+                              placeholder="e.g. Goa Protocol Guild"
+                              value={info.teamName}
+                              onChange={(e) => updateInfo('teamName', e.target.value)}
+                              id="input-team-name"
+                            />
+                          </div>
+                          <div className="team-slots">
+                            {[0, 1, 2, 3].map((idx) => (
+                              <div key={idx} className="team-slot">
+                                <div
+                                  className={`team-slot-drop${teamPhotos[idx] ? ' filled' : ''}`}
+                                  onClick={() => teamFileRefs[idx].current?.click()}
+                                >
+                                  <input
+                                    ref={teamFileRefs[idx]}
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => handleFile(e.target.files?.[0], idx)}
+                                  />
+                                  {teamPhotos[idx] ? '✓ Member' : `+ Member ${idx + 1}`}
+                                </div>
                                 <input
-                                  ref={teamFileRefs[idx]}
-                                  type="file"
-                                  accept="image/*"
-                                  style={{ display: 'none' }}
-                                  onChange={(e) => handleFile(e.target.files?.[0], idx)}
+                                  type="text"
+                                  className="field-input"
+                                  placeholder={`Member ${idx + 1} Name`}
+                                  value={info.teamNames[idx]}
+                                  onChange={(e) => updateTeamName(idx, e.target.value)}
                                 />
-                                {teamPhotos[idx] ? '✓ Member' : `+ Member ${idx + 1}`}
                               </div>
-                              <input
-                                type="text"
-                                className="field-input"
-                                placeholder={`Member ${idx + 1} Name`}
-                                value={info.teamNames[idx]}
-                                onChange={(e) => updateTeamName(idx, e.target.value)}
-                              />
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
