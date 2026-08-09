@@ -112,10 +112,9 @@ function calcScore(inputs) {
   const bookmarks = parseInt(inputs.bookmarks) || 0
   const retweets = parseInt(inputs.retweets) || 0
   const quotes = parseInt(inputs.quotes) || 0
-  const views = parseInt(inputs.views) || 0
 
-  const pts = likes * 1 + replies * 2 + bookmarks * 3 + retweets * 4 + quotes * 4 + views * 0.02
-  return Math.min(100, Math.max(0, Math.round((pts / 500) * 100)))
+  const pts = likes * 1 + replies * 2 + bookmarks * 3 + retweets * 4 + quotes * 4
+  return Math.min(100, Math.max(0, Math.round((pts / 800) * 100)))
 }
 
 function verdict(score) {
@@ -1002,7 +1001,6 @@ export default function Page() {
     bookmarks: '',
     retweets: '',
     quotes: '',
-    views: '',
   })
   const [assetsLoaded, setAssetsLoaded] = useState(false)
   const [assets, setAssets] = useState({})
@@ -1661,7 +1659,6 @@ export default function Page() {
                   ['replies', 'Replies', '× 2 pts'],
                   ['bookmarks', 'Bookmarks', '× 3 pts'],
                   ['quotes', 'Quotes', '× 4 pts'],
-                  ['views', 'Views', '× 0.02 pt'],
                 ].map(([key, label, mult]) => (
                   <div className="hype-input-card" key={key}>
                     <div className="hype-input-top">

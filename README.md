@@ -24,6 +24,13 @@ Drop your photo, personalize your pass details, and post with **#FrameInGoa** on
 
 All share text includes `#FrameInGoa` — this is mandatory to get tracked on the HH Goa 2026 selection radar.
 
+## Score Formula
+
+```
+points = likes×1 + replies×2 + bookmarks×3 + retweets×4 + quotes×4
+score  = clamp(round(points / 800 × 100), 0, 100)
+```
+
 ## Local Development
 
 ```bash
